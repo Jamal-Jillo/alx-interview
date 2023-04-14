@@ -30,7 +30,10 @@ try:
                 if status_codes[code] != 0:
                     print("{}: {}".format(code, status_codes[code]))
 
-except KeyboardInterrupt:
+except Exception as err:
+    pass
+
+finally:
     print("File size: {}".format(total_size))
     for code in sorted(status_codes.keys()):
         if status_codes[code] != 0:
