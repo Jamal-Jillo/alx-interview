@@ -23,14 +23,14 @@ def validUTF8(data):
         else:
             # Invalid byte sequence
             return False
-        
+
         # Check that the next length-1 bytes start with 0b10xxxxxx
         for j in range(i+1, i+length):
             if j >= len(data) or (data[j] & 0b11000000) != 0b10000000:
                 return False
-        
+
         # Move to the next character
         i += length
-    
+
     # If we reached the end of the data, it is a valid UTF-8 sequence
     return True
