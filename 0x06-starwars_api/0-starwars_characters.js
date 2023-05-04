@@ -1,29 +1,25 @@
 #!/usr/bin/node
 const request = require('request');
-const movieId = process.argv[2];
+const API_URL = 'https://swapi-api.hbtn.io/api';
 
-if (!movieId) {
-  console.error('Usage: ./0-starwars_characters.js <movie_id>');
-  process.exit(1);
+if (process.argv.length > 2) {
+  request(`${API_URL}/films/${process.argv[2]}/`, (err, _, body) => {
+    if (err) {
+      console.log(err);
+    }
+    const charactersURL = JSON.parse(body).characters;
+    const charactersName = charactersURL.map(
+      url => new Promise((resolve, reject) => {
+        request(url, (promiseErr, __, charactersReqBody) => {
+          if (promiseErr) {
+            reject(promiseErr);
+          }
+          resolve(JSON.parse(charactersReqBody).name);
+        });
+      }));
+
+    Promise.all(charactersName)
+      .then(names => console.log(names.join('\n')))
+      .catch(allErr => console.log(allErr));
+  });
 }
-
-const url = `https://swapi.dev/api/films/${movieId}/`;
-request(url, function (error, response, body) {
-  if (error || response.statusCode !== 200) {
-    console.error('Error: Could not retrieve movie information');
-    process.exit(1);
-  }
-
-  const characters = JSON.parse(body).characters;
-  for (const characterUrl of characters) {
-    request(characterUrl, function (error, response, body) {
-      if (error || response.statusCode !== 200) {
-        console.error('Error: Could not retrieve character information');
-        return;
-      }
-
-      const character = JSON.parse(body).name;
-      console.log(character);
-    });
-  }
-});
