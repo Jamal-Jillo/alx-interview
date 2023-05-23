@@ -3,7 +3,7 @@
 
 
 def makeChange(coins, total):
-    """makeChange function
+    """MakeChange function.
 
     Arguments:
         coins {list} -- list of the coins 
